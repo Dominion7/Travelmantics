@@ -1,20 +1,24 @@
 package com.ddivine.travelmantics;
 
-public class TravelDeal {
+import java.io.Serializable;
+
+public class TravelDeal implements Serializable {
     private String id;
-    private String Title;
-    private String Price;
-    private String Description;
+    private String title;
+    private String description;
+    private String price;
     private String imageUrl;
+    private String imageName;
 
-    public TravelDeal () {}
+    public TravelDeal(){}
 
-    public TravelDeal(String title, String description, String price, String imageUrl) {
-        this.setId(getId());
-        setTitle(title);
-        setPrice(price);
-        setDescription(description);
+    public TravelDeal(String title, String description, String price, String imageUrl, String imageName) {
+        this.setId(id);
+        this.setTitle(title);
+        this.setDescription(description);
+        this.setPrice(price);
         this.setImageUrl(imageUrl);
+        this.setImageName(imageName);
     }
 
     public String getId() {
@@ -26,27 +30,27 @@ public class TravelDeal {
     }
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
-    }
-
-    public String getPrice() {
-        return Price;
-    }
-
-    public void setPrice(String price) {
-        Price = price;
+        this.title = title;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getImageUrl() {
@@ -55,5 +59,14 @@ public class TravelDeal {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }
