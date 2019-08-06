@@ -18,8 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
@@ -111,28 +114,43 @@ public class DealActivity extends AppCompatActivity {
             return true;
         }
 
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == PICTURE_RESULT && resultCode == RESULT_OK) {
-                assert data != null;
-                Uri imageUri = data.getData();
-                assert imageUri != null;
-                final StorageReference ref = FirebaseUtil.mStorageRef.child(imageUri.getLastPathSegment());
-                UploadTask uploadTask = ref.putFile(imageUri);
-                uploadTask.addOnSuccessListener(this,(OnSuccessListener<? super UploadTask.TaskSnapshot>) new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                deal.setImageUrl(uri.toString());
-                            }
-                        });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICTURE_RESULT && resultCode == RESULT_OK) {
+            Uri imageUri = data.getData();
+            final StorageReference ref = FirebaseUtil.mStorageRef.child(imageUri.getLastPathSegment());
+            UploadTask uploadTask = ref.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (task.isSuccessful()) {
+                        String imageName = task.getResult().getStorage().getPath();
+                        deal.setImageName(imageName);
+                        return ref.getDownloadUrl();
+                    } else
+                        throw task.getException();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        if (downloadUri != null){
+                            String imageUrl = downloadUri.toString();
+                            deal.setImageUrl(imageUrl);
+                        }
                     }
-                });
-            }
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    showImage(deal.getImageUrl());
+                }
+            });
         }
+    }
+
 
         private void saveDeal() {
             deal.setTitle(txtTitle.getText().toString());
@@ -186,7 +204,7 @@ public class DealActivity extends AppCompatActivity {
         private void showImage(String url) {
             if ((url != null) && !url.isEmpty()) {
                 int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-                Picasso.with(this)
+                Picasso.get()
                         .load(url)
                         .resize(width, width*2/3)
                         .centerCrop()

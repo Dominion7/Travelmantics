@@ -1,6 +1,5 @@
 package com.ddivine.travelmantics;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
-import static androidx.recyclerview.widget.LinearLayoutManager.VERTICAL;
 
 public class ListActivity extends AppCompatActivity {
     /*ArrayList<TravelDeal> deals;
@@ -83,8 +80,8 @@ public class ListActivity extends AppCompatActivity {
         RecyclerView rvDeals = (RecyclerView) findViewById(R.id.rvDeals);
         final DealAdapter adapter = new DealAdapter();
         rvDeals.setAdapter(adapter);
-        @SuppressLint("WrongConstant") LinearLayoutManager dealsLayoutManager =
-                new LinearLayoutManager(this, VERTICAL, false);
+        LinearLayoutManager dealsLayoutManager =
+                new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rvDeals.setLayoutManager(dealsLayoutManager);
         FirebaseUtil.attachListener();
     }
