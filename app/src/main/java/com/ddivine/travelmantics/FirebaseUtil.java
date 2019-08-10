@@ -19,18 +19,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FirebaseUtil {
-    private static final int RC_SIGN_IN = 123;
     public static FirebaseDatabase mFirebaseDatabase;
     public static DatabaseReference mDatabaseReference;
+    private static final int RC_SIGN_IN = 123;
     public static FirebaseAuth mFirebaseAuth;
     public static FirebaseStorage mStorage;
     public static StorageReference mStorageRef;
     public static FirebaseAuth.AuthStateListener mAuthListener;
     public static ArrayList<TravelDeal> mDeals;
-    public static boolean isAdmin;
     private static FirebaseUtil firebaseUtil;
-        private static ListActivity caller;;
-private FirebaseUtil(){}
+    private static ListActivity caller;
+    private FirebaseUtil(){};
+    public static boolean isAdmin;
+
 
     public static void openFbReference(String ref, final ListActivity callerActivity) {
         if (firebaseUtil == null) {
@@ -71,10 +72,9 @@ private FirebaseUtil(){}
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
-
-
     }
 
     private static void checkAdmin(String uid) {
